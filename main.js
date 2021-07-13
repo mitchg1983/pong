@@ -13,30 +13,89 @@ const BALL_SIZE = 20;
 const computerPaddle = document.querySelector(".computer-paddle");
 
 const ball = document.querySelector(".ball");
-
 const playerPaddle = document.querySelector(".player-paddle");
-
 const field = document.querySelector(".game-area");
-
-let sUP = true;
-
-let wUP = true;
+const scoreBoard = document.querySelector(".score");
+const points = document.querySelector(".points");
+const startButton = document.querySelector(".startButton");
+const stopButton = document.querySelector(".stopButton");
 
 // The y-velocity of the computer paddle
 let computerPaddleYPosition = 0;
-// let computerPaddleYVelocity = 0;
 
-let playerPaddleYPosition = 0;
-let playerPaddleYVelocity = 1;
+//Starting position for the player paddle.
+let playerPaddleYPosition = 200;
 playerPaddle.style.top = `${playerPaddleYPosition}px`;
 
-let xPos = 0;
-let xVel = 6;
-let yPos = 0;
-let yVel = 6;
+//This value determines how the player paddle moves. When the 's' key is pressed this value becomes '1'. When the
+//'w' key is pressed, the value is -1.
+let playerPaddleYVelocity = 0;
 
+//Position for the ball.
+let xPos = 0;
+let yPos = 0;
+
+//Speed of the ball, also doubles as a difficulty slider.
+let yVel = 1.25;
+let xVel = 1.25;
+
+//Score of the game.
 let playerScore = 0;
-let compScore = 0;
+let compScore = -1;
+
+//Status of the game state; running vs not-running.
+let running = false;
+
+
+
+//
+//
+//Opening screen for the player.
+//
+//
+
+
+//Event listeners
+// startButton.addEventListener("click", startPush);
+// stopButton.addEventListener("click", stopPush);
+
+
+
+// const runner = setInterval(update, 5);
+
+// //Button controls
+// function startPush () {
+//   // setInterval(update, 5);
+// }
+
+// function stopPush () {
+//   clearInterval(runner);
+// }
+
+let runner = '';
+
+startButton.onclick = startGame;
+
+function startGame() {
+
+  if (runner !== '') {
+    return
+  }
+
+  runner = setInterval(update, 5);
+
+}
+
+
+
+stopButton.onclick = stopGame;
+
+function stopGame() {
+
+  clearInterval(runner);
+  runner = '';
+
+}
 
 // Update the pong world
 function update() {
@@ -45,7 +104,9 @@ function update() {
   computerPaddleYPosition = yPos;
   computerPaddle.style.top = `${follower}px`;
 
-  //Set the location of the player paddle. *******TEMP*******
+  //Update the player's paddle based on keyboard input.
+  playerPaddleYPosition = playerPaddleYPosition + playerPaddleYVelocity;
+  playerPaddle.style.top = `${playerPaddleYPosition}px`;
 
   //Game boundaries for the ball.
   if (yPos >= 480) {
@@ -95,97 +156,46 @@ function update() {
     xVel = xVel * -1;
   }
 
-  //Update the position of the ball
+  //Update the position of the ball.
   xPos = xPos + xVel;
   yPos = yPos + yVel;
 
-  //Apply the new position to the ball
+  //Apply the new position to the ball.
   ball.style.top = `${yPos}px`;
   ball.style.left = `${xPos}px`;
 
-  addEventListener("keydown", (playerInput) => {
-    if (playerInput.key === "s") {
+  //Update the scoreboard.
+  let pointOutput = playerScore + ' - ' + compScore;
+  points.innerText = pointOutput;
 
-      playerPaddleYPosition = playerPaddleYPosition + playerPaddleYVelocity;
-      playerPaddle.style.top = `${playerPaddleYPosition}px`;
-    }
 
-    if (playerInput.key === "w") {
 
-        playerPaddleYPosition = playerPaddleYPosition - playerPaddleYVelocity;
-        playerPaddle.style.top = `${playerPaddleYPosition}px`;
-    }
-  });
+
+
+
+
 }
 
-// addEventListener("keydown", (inp) => {
-//   if (inp.key === "s") {
-//     //   sUP = false;
-//     setInterval(playerPaddleDown, 50);
-//   }
-
-//   if (inp.key === "w") {
-//     setInterval(playerPaddleUp, 50);
-//   }
-// });
-
-// addEventListener("keyup", (inp) => {
-//   if (inp.key === "s") {
-//     sUp = true;
-//   }
-// });
-
-// function playerPaddleDown() {
-
-//   if (sUP === false) {
-//   playerPaddleYVelocity = 1;
-//   playerPaddleYPosition = playerPaddleYPosition + playerPaddleYVelocity;
-//   playerPaddle.style.top = `${playerPaddleYPosition}px`;
-//   }
-
-//   if (sUP === true) {
-//       playerPaddleYVelocity = 0;
-//       return;
-//   }
-
-// }
-// function playerPaddleUp() {
-//   playerPaddleYVelocity = 1;
-//   playerPaddleYPosition = playerPaddleYPosition - playerPaddleYVelocity;
-//   playerPaddle.style.top = `${playerPaddleYPosition}px`;
-// }
-
-//PLayer input event listeners & functions
-
-// addEventListener("keydown", (playerInput) => {
-//   if (playerInput.key === "s") {
-//     sUP = false;
-//     console.log('You are pressing the s key.');
-//     console.log(sUP);
-//     }
-
-//   if (playerInput.key === "w") {
-//     wUP = false;
-//   }
-// });
-
-addEventListener("keyup", (playerInput) => {
+//Player control for the player paddle.
+addEventListener("keydown", (playerInput) => {
   if (playerInput.key === "s") {
-    sUP = true;
-    console.log("You have released the s key.");
-    console.log(sUP);
+    playerPaddleYVelocity = 1;
   }
 
   if (playerInput.key === "w") {
-    wUP = true;
+    playerPaddleYVelocity = -1;
   }
 });
 
-if (sUP === true) {
-  console.log("You did it.");
-}
+addEventListener("keyup", (playerInput) => {
+  if (playerInput.key === "s") {
+    playerPaddleYVelocity = 0;
+  }
 
-//new sec
+  if (playerInput.key === "w") {
+    playerPaddleYVelocity = 0;
+  }
+});
 
-// Call the update() function every 35ms
-setInterval(update, 35);
+// Call the update() function every 35ms.
+//   setInterval(update, 5);

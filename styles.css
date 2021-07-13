@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Orbitron');
+
 body {
     display: flex;
     justify-content: center;
@@ -5,12 +7,13 @@ body {
     margin: 0;
     background-color: #333;
     height: 100vh;
+    font-family: Orbitron;
 }
 
 .game-area {
     width: 700px;
     height: 500px;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.927);
     position: relative;
 }
 
@@ -21,6 +24,7 @@ body {
     position: absolute;
     top: 0;
     left: 0;
+    border-radius: 10px;
 }
 
 .paddle {
@@ -28,11 +32,13 @@ body {
     height: 100px;
     top: 100px;
     position: absolute;
-    background-color: black;
+    background-color: rgba(0, 0, 0, 0.906);
+    border-radius: 10px;
 }
 
 .player-paddle {
     left: 0;
+    border-right: solid, 2px, red;
 
 }
 
@@ -40,3 +46,19 @@ body {
     right: 0;
 }
 
+.score {
+width: 280px;
+height: 55px;
+background-color: blue;
+top: -60px;
+left: 210px;
+position: absolute;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.points {
+    color: white;
+    font-size: 30px;
+}
