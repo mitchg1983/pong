@@ -35,11 +35,9 @@ let playerPaddleYVelocity = 0;
 
 let superBall = false;
 
+let smasher = false;
+
 let timer = 0;
-
-let fastTemp = "";
-
-let fastTemp2 = "";
 
 //Player control for the player paddle. Using keydown so you can hold the key, to get continuous movement.
 addEventListener("keydown", (playerInput) => {
@@ -86,18 +84,8 @@ let xVel = 1.25;
 let playerScore = 0;
 let compScore = 0;
 
-//
-//
-//Opening screen for the player.
-//
-//
-
-// window.onload = alert(
-//   "Hello! Welcome to Pong, the best Pong clone on the market."
-// );
-
 //Start & Stop controls
-//This variable holds the setInterval & clearInterval window methods
+//This variable holds the setInterval & clearInterval window methods.
 let runner = "";
 
 startButton.onclick = startGame;
@@ -112,7 +100,7 @@ function startGame() {
   }
   runner = setInterval(update, 5);
 
-  playerPaddleYPosition = 200;
+
 }
 
 function stopGame() {
@@ -128,9 +116,10 @@ function speedUp() {
   yVel = yVel * 1.2;
   xVel = xVel * 1.2;
 
+  //This code will give some feedback to the player that the button was pressed.
   fastImg();
-  setTimeout(outFast, 3000);
-  return
+  setTimeout(outFast, 1500);
+  return;
 }
 
 function slowDown() {
@@ -138,45 +127,56 @@ function slowDown() {
   xVel = xVel * 0.8;
 }
 
+//Image functions for speed-up & slow-down.
+//This variable holds the setInterval & clearInterval window methods.
+let fastTemp = "";
+
+//This function will set fastFade to run every 50ms, which will slowly increment the opacity of the image.
 function fastImg() {
   fastTemp = setInterval(fastFade, 50);
   return;
 }
 
+//This function will set fastFadeOut to run every 50ms, which will slowly decrease the opacity of the image.
 function outFast() {
   fastTemp = setInterval(fastFadeOut, 50);
-
   return;
 }
 
+//fastFade increases the opacity of the image to appear, when the player clicks the 'faster' button.
 function fastFade() {
+  //This took me a long time to figure out. The below code will grab a copy of the opacity value, of the
+  //element 'faster'. I am not sure why 'window' needs to be written here.
   let fasterOpacity = window
     .getComputedStyle(faster)
     .getPropertyValue("opacity");
+
+  //There was a lot of troubleshooting, so to make things simpler for me, I just make a new variable
+  //to store a Number version of the opacity value, which is returned to us as a string.
   let fasterOpacityNum = Number(fasterOpacity);
 
+  //Everytime this function is run, it will check to see if the image is at full opacity or not. If it is below 1,
+  //we increase the opacity by 0.08, then end the function. This could potentially be done with a loop or recursion,
+  //but that proved very diffucult for me.
   if (fasterOpacityNum < 1) {
-    console.log("I am INCREASING the opacity of the image.");
     fasterOpacityNum = fasterOpacityNum + 0.08;
     let input = fasterOpacityNum.toString();
     faster.style.opacity = input;
     return;
   }
 
+  //If the image is at max opacity, we end the function and clear the interval. You must clear the interval ***BEFORE***
+  //setting the variable back to an empty string. I had the two of those swapped and it caused a massive headache.
   if (fasterOpacityNum >= 1) {
-    console.log("The image is at maximum opacity.");
     clearInterval(fastTemp);
     fastTemp = "";
     return;
   }
-
-
-
   return;
 }
 
+//This function is almost identitcal to fastFade, except here it reduces the opacity of the image.
 function fastFadeOut() {
-
   let fasterOpacity = window
     .getComputedStyle(faster)
     .getPropertyValue("opacity");
@@ -196,14 +196,6 @@ function fastFadeOut() {
     fastTemp = "";
     return;
   }
-
-}
-
-function fastStop() {
-  console.log("We should be stopping");
-
-  fastTemp = "";
-  console.log(fastTemp);
 }
 
 // Update the pong world
@@ -237,6 +229,9 @@ function update() {
 
     ball.style.top = `${yPos}px`;
     ball.style.left = `${xPos}px`;
+
+    ball.style.backgroundColor = "green";
+    smasher = false;
   }
 
   //Scoring a point for the computer.
@@ -254,13 +249,32 @@ function update() {
 
   //Paddle ball bounce
   if (
+    smasher === false &&
     xPos >= 660 &&
     yPos >= computerPaddleYPosition &&
     yPos <= computerPaddleYPosition + 100
   ) {
     xVel = xVel * -1;
     ball.style.backgroundColor = "green";
+    smasher = false;
   }
+
+  if (
+    smasher === true &&
+    xPos >= 660 &&
+    yPos >= computerPaddleYPosition &&
+    yPos <= computerPaddleYPosition + 100
+  ) {
+    // xVel = xVel * -1;
+
+
+  }
+
+
+
+
+
+
 
   if (
     superBall === false &&
@@ -278,8 +292,9 @@ function update() {
     yPos <= playerPaddleYPosition + 100
   ) {
     xVel = xVel * -1;
-
+    smasher = true;
     ball.style.backgroundColor = "orange";
+
   }
 
   //Update the position of the ball.
