@@ -39,7 +39,7 @@ body {
 .player-paddle {
     left: 0;
     border-right: solid, 2px, red;
-
+    
 }
 
 .computer-paddle {
@@ -47,18 +47,40 @@ body {
 }
 
 .score {
-width: 280px;
-height: 55px;
-background-color: blue;
-top: -60px;
-left: 210px;
-position: absolute;
-display: flex;
-align-items: center;
-justify-content: center;
+    width: 280px;
+    height: 55px;
+    background-color: blue;
+    top: -60px;
+    left: 210px;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .points {
     color: white;
     font-size: 30px;
+}
+
+.controls {
+    position: absolute;
+    bottom: 60px;
+}
+
+.faster {
+position: absolute;
+left: 25px;
+width: 18%;
+opacity: 0;
+}
+
+.slower {
+position: absolute;
+left: 25px;
+height: 200px;
+width: 200px;
+border: solid red 1px;
+background-color: orange;
+opacity: 0;
 }
