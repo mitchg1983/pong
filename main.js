@@ -22,6 +22,7 @@ const stopButton = document.querySelector(".stopButton");
 const fasterButton = document.querySelector(".fasterButton");
 const slowerButton = document.querySelector(".slowerButton");
 const faster = document.querySelector(".faster");
+const slower = document.querySelector(".slower");
 
 //Starting position for the player & computer paddle.
 let playerPaddleYPosition = 200;
@@ -51,7 +52,6 @@ addEventListener("keydown", (playerInput) => {
 
   if (playerInput.key === "l") {
     superBall = true;
-    console.log("Superball is", superBall);
   }
 });
 
@@ -68,7 +68,6 @@ addEventListener("keyup", (playerInput) => {
 
   if (playerInput.key === "l") {
     superBall = false;
-    console.log("Superball is", superBall);
   }
 });
 
@@ -99,8 +98,6 @@ function startGame() {
     return;
   }
   runner = setInterval(update, 5);
-
-
 }
 
 function stopGame() {
@@ -125,11 +122,17 @@ function speedUp() {
 function slowDown() {
   yVel = yVel * 0.8;
   xVel = xVel * 0.8;
+
+  //This code will give some feedback to the player tha the button was pressed.
+  slowImg();
+  setTimeout(outSlow, 800);
+  return;
 }
 
 //Image functions for speed-up & slow-down.
 //This variable holds the setInterval & clearInterval window methods.
 let fastTemp = "";
+let slowTemp = "";
 
 //This function will set fastFade to run every 50ms, which will slowly increment the opacity of the image.
 function fastImg() {
@@ -137,9 +140,19 @@ function fastImg() {
   return;
 }
 
+function slowImg() {
+  slowTemp = setInterval(slowFade, 50);
+  return;
+}
+
 //This function will set fastFadeOut to run every 50ms, which will slowly decrease the opacity of the image.
 function outFast() {
   fastTemp = setInterval(fastFadeOut, 50);
+  return;
+}
+
+function outSlow() {
+  slowTemp = setInterval(slowFadeOut, 50);
   return;
 }
 
@@ -175,7 +188,31 @@ function fastFade() {
   return;
 }
 
+//slowFade decreases the opacity of the image to appear, when the player clicks the 'slower' button.
+function slowFade() {
+  let slowerOpacity = window
+    .getComputedStyle(slower)
+    .getPropertyValue("opacity");
+
+  let slowerOpacityNum = Number(slowerOpacity);
+
+  if (slowerOpacityNum < 1) {
+    slowerOpacityNum = slowerOpacityNum + 0.08;
+    let input = slowerOpacityNum.toString();
+    slower.style.opacity = input;
+    return;
+  }
+
+  if (slowerOpacityNum >= 1) {
+    clearInterval(slowTemp);
+    slowTemp = "";
+    return;
+  }
+  return;
+}
+
 //This function is almost identitcal to fastFade, except here it reduces the opacity of the image.
+
 function fastFadeOut() {
   let fasterOpacity = window
     .getComputedStyle(faster)
@@ -183,7 +220,6 @@ function fastFadeOut() {
   let fasterOpacityNum = Number(fasterOpacity);
 
   if (fasterOpacityNum > 0) {
-    console.log("I am DECREASING the opacity of the image.");
     fasterOpacityNum = fasterOpacityNum - 0.08;
     let input = fasterOpacityNum.toString();
     faster.style.opacity = input;
@@ -191,9 +227,28 @@ function fastFadeOut() {
   }
 
   if (fasterOpacityNum <= 0) {
-    console.log("The image is at minimum opacity.");
     clearInterval(fastTemp);
     fastTemp = "";
+    return;
+  }
+}
+
+function slowFadeOut() {
+  let slowerOpacity = window
+    .getComputedStyle(slower)
+    .getPropertyValue("opacity");
+  let slowerOpacityNum = Number(slowerOpacity);
+
+  if (slowerOpacityNum > 0) {
+    slowerOpacityNum = slowerOpacityNum - 0.12;
+    let input = slowerOpacityNum.toString();
+    slower.style.opacity = input;
+    return;
+  }
+
+  if (slowerOpacityNum <= 0) {
+    clearInterval(slowTemp);
+    slowTemp = "";
     return;
   }
 }
@@ -225,13 +280,15 @@ function update() {
     playerScore++;
 
     yPos = 240;
-    xPos = 340;
+    xPos = 140;
 
     ball.style.top = `${yPos}px`;
     ball.style.left = `${xPos}px`;
 
     ball.style.backgroundColor = "green";
     smasher = false;
+
+    stopGame();
   }
 
   //Scoring a point for the computer.
@@ -239,7 +296,7 @@ function update() {
     compScore++;
 
     yPos = 240;
-    xPos = 340;
+    xPos = 540;
 
     ball.style.top = `${yPos}px`;
     ball.style.left = `${xPos}px`;
@@ -265,16 +322,7 @@ function update() {
     yPos >= computerPaddleYPosition &&
     yPos <= computerPaddleYPosition + 100
   ) {
-    // xVel = xVel * -1;
-
-
   }
-
-
-
-
-
-
 
   if (
     superBall === false &&
@@ -294,7 +342,6 @@ function update() {
     xVel = xVel * -1;
     smasher = true;
     ball.style.backgroundColor = "orange";
-
   }
 
   //Update the position of the ball.
@@ -309,7 +356,3 @@ function update() {
   let pointOutput = playerScore + " - " + compScore;
   points.innerText = pointOutput;
 }
-
-// faces.fadeTo("slow", 0);
-
-// faces.style.backgroundColor = 'black';
